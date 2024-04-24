@@ -48,7 +48,7 @@ export default async function() {
             <div>
                 <BalanceCard amount={balance.amount} locked={balance.locked} />
                 <div className="pt-4">
-                    <OnRampTransactions transactions={transactions} />
+                    <OnRampTransactions transactions={transactions}  />
                 </div>
             </div>
         </div>
