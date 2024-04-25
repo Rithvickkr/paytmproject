@@ -1,27 +1,40 @@
-import { OnRampTransactions } from "../../../components/OnRampTransaction"
-import { getServerSession } from "next-auth";
-import { authOptions } from "../../lib/auth";
-import prisma from "@repo/db/client";
-export default async function() {
-    async function getOnRampTransactions() {
-        const session = await getServerSession(authOptions);
-        const txns = await prisma.onRampTransaction.findMany({//array comes in this
-            where: {
-                userId: Number(session?.user?.id)
-            }
-        });
-        return txns.map(t => ({
-            time: t.startTime,
-            amount: t.amount,
-            status: t.status,
-            provider: t.provider
-        })) 
-        
-    }
-   const transactions = await getOnRampTransactions();
-    return <div>
-        <div className="pt-4">
-                    <OnRampTransactions transactions={transactions}  />
+import { OnRampTransactions } from "../../../components/OnRampTransaction";
+import { getOnRampTransactions } from "../transfer/page";
+export default async function () {
+  const transactions = await getOnRampTransactions();
+  return (
+    <div>
+      <div className=" ">
+        <div className="text-4xl text-blue-500 pt-8 mb-8 font-bold">
+         Recent transactions
+        </div>
+        <div className="pt-2">
+            {transactions.map(t => (
+                <div className="flex justify-between" key={t.time.toString()}>
+                    <div>
+                        <div className="text-xl text-white">
+                            Received INR
+                        </div>
+                        <div className=" text-s text-white">
+                            {t.time.toDateString()}
+                        </div>
+                        <div className={`${
+                            t.status === "Success" ? "text-green-600" :
+                            t.status === "Processing" ? "text-blue-500" :
+                            "text-red-700"
+                        } text-l`}>
+                            {t.status === "Success" ? "Success" :
+                            t.status === "Processing" ? "Processing" :
+                            "Failed"}
+                        </div>
+                    </div>
+                    <div className="flex flex-col justify-center text-white text-xl">
+                        + Rs {t.amount / 100}
+                    </div>
                 </div>
+            ))}
+        </div>
+      </div>
     </div>
+  );
 }

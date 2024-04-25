@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "exports": {
-    "./appbar": "./src/appbar.tsx",
+    "./Appbar": "./src/Appbar.tsx",
     "./center": "./src/center.tsx",
     "./select": "./src/select.tsx",
     "./textinput": "./src/textinput.tsx",

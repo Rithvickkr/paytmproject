@@ -23,7 +23,7 @@ export const AddMoney = () => {
         <TextInput label={"Amount"} placeholder={"Amount"} onChange={(val) => {
             setValue(Number(val))
         }} />
-        <div className="py-4 text-left">
+        <div className="py-4 text-white text-left">
             Bank
         </div>
         <Select onSelect={(value) => {
@@ -33,7 +33,7 @@ export const AddMoney = () => {
             key: x.name,
             value: x.name
         }))} />
-        <div className="flex justify-center pt-4">
+        <div className="flex justify-center pt-4 ">
             <Button onClick={async () => {
                 await createOnRampTransaction(provider, value)
                 window.location.href = redirectUrl || "";
