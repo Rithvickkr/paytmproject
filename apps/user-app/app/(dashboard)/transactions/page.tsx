@@ -1,6 +1,7 @@
 import { getOnRampTransactions } from "../transfer/page";
-import { OnRampStatus } from "@prisma/client";
+
 export default async function () {
+  type OnRampStatus = "Success" | "Failure" | "Processing"
    type ty ={
         time: Date;
         amount: number;

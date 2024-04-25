@@ -4,7 +4,7 @@ import { BalanceCard } from "../../../components/BalanceCard";
 import { OnRampTransactions } from "../../../components/OnRampTransaction";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../lib/auth";
-import { OnRampStatus } from "@prisma/client";
+
 
  export async function getBalance() {
    
@@ -21,6 +21,7 @@ import { OnRampStatus } from "@prisma/client";
 }
 
 export async function getOnRampTransactions() {
+    type OnRampStatus = "Success" | "Failure" | "Processing"
     type tp= {
         id: number;
         status: OnRampStatus;
