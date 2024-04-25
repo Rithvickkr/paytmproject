@@ -31,11 +31,11 @@ export const OnRampTransactions = ({
                         </div>
                         <div className={`${
                             t.status === "Success" ? "text-green-600" :
-                            t.status === "Pending" ? "text-blue-500" :
+                            t.status === "Processing" ? "text-blue-500" :
                             "text-red-700"
                         }`}>
                             {t.status === "Success" ? "Success" :
-                            t.status === "Pending" ? "Pending" :
+                            t.status === "Processing" ? "Processing" :
                             "Failed"}
                         </div>
                     </div>
