@@ -18,7 +18,10 @@ model User {
   Balance           Balance[]
   sentTransfers     p2pTransfer[]       @relation(name: "FromUserRelation")
   receivedTransfers p2pTransfer[]       @relation(name: "ToUserRelation")
-}
+  transactionsfrom    Transaction[]       @relation(name: "fFromUserRelation")
+  transactionsto   Transaction[]       @relation(name: "tToUserRelation")
+
+  }
 
 model Merchant {
   id        Int      @id @default(autoincrement())
@@ -53,6 +56,17 @@ model Balance {
   amount Int
   locked Int
   user   User @relation(fields: [userId], references: [id])
+}
+
+model Transaction {
+  id         Int      @id @default(autoincrement())
+  amount     Int
+  timestamp  DateTime
+  fromUserId Int
+  cash       String
+ toUserId   Int
+  fromUser   User     @relation(name: "fFromUserRelation", fields: [fromUserId], references: [id])
+  toUser     User     @relation(name: "tToUserRelation", fields: [toUserId], references: [id])
 }
 
 enum AuthType {

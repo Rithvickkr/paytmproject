@@ -15,25 +15,33 @@ export default async function () {
         provider: string;
    }
   const transactions = await getOnRampTransactions();
-   async function getusertransactions(from: string) {
-    const p2ptransfer =await prisma.p2pTransfer.findMany({
+   async function getusertransactions(from: number) {
+    const getinfo:any=await prisma.transaction.findMany({
       where: {
         fromUserId: Number(from)
       }
     });
-    if(p2ptransfer.length===0){
+    const getinfoto:any=await prisma.transaction.findMany({
+      where: {
+        toUserId: Number(from)
+      }
+    });
+    if(getinfo.length===0 ){
       return [[],[]]
     }
-     const touser:any=p2ptransfer.map((t)=>({
-      touserid:t.toUserId
-    }))
+    
     const tousername=await prisma.user.findMany({
-      where:{
-        id:touser[0].touserid
-      }
+      where:{ id:getinfo[0].toUserId }
     })
     
-      const userdata=[p2ptransfer,tousername] ;
+    const forusername=await prisma.user.findMany({
+      where:{ id:getinfoto[0].toUserId }
+    })
+    
+
+    
+    
+      const userdata=[getinfo,tousername,forusername] ;
       return userdata;
       
     }
@@ -82,9 +90,10 @@ export default async function () {
         <div className="pt-2 ml-14" key={t.timestamp.toString()}>
           <div className="flex justify-between py-3">
             <div>
-              <div className="text-xl text-white">Sent INR</div>
-              <div className="text-xl text-white">to-{u.name}</div>
-              <div className="text-xl text-white">number-{u.number}</div>
+              {t.cash === "out"? <div className="text-xl text-white">Sent INR</div> : <div className="text-xl text-white">Received INR</div>}
+            
+              {t.cash === "out"? <div className="text-xl text-white">to-{u.name}</div> : <div className="text-xl text-white">from-{u.name}</div>}
+              {t.cash === "out"? <div className="text-xl text-white">number-{u.number}</div> : <div className="text-xl text-white">number-{u.number}</div>}
               <div className="text-s text-white">
                 {t.timestamp.toDateString()}
               </div>
@@ -92,9 +101,12 @@ export default async function () {
                 Success
               </div>
             </div>
-            <div className="flex flex-col justify-center mr-28 text-red-600 text-xl">
+            {t.cash === "out"?  <div className="flex flex-col justify-center mr-28 text-red-600 text-xl">
               - Rs {t.amount / 100}
-            </div>
+            </div> :  <div className="flex flex-col justify-center mr-28 text-green-500 text-xl">
+              + Rs {t.amount / 100}
+            </div>}
+            
           </div>
         </div>
       ))

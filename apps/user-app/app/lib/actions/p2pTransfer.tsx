@@ -40,10 +40,54 @@ export async function p2pTransfer(to: string, amount: number) {
             where: { userId: Number(from) },
             data: { amount: { decrement: amount } },
           });
+          await tx.Transaction.create({
+            data: {
+             
+              amount: amount,
+              timestamp: new Date(),
+               cash:"out",
+              fromUser: {
+                connect: {
+                  id: Number(from)// Replace with the correct ID of the 'from' user
+                }
+              },
+               
+                toUser: {
+                  connect: {
+                    id: toUser.id// Replace with the correct ID of the 'to' user
+                  }
+                }
+             
+            },
+          });
 
           await tx.balance.update({
             where: { userId: toUser.id },
             data: { amount: { increment: amount } },
+          });
+          await tx.Transaction.create({
+            
+            data: {
+             
+              amount: amount,
+              timestamp: new Date(), 
+             
+              cash:"in",
+              
+              fromUser: {
+                connect: {
+                  id: toUser.id// Replace with the correct ID of the 'from' user
+                }
+              },
+               
+                toUser: {
+                  connect: {
+                    id: Number(from)// Replace with the correct ID of the 'to' user
+                  }
+                }
+             
+              
+            },
           });
           await tx.p2pTransfer.create({
             data: {
