@@ -2,7 +2,7 @@ import prisma from "@repo/db/client";
 import { getOnRampTransactions } from "../transfer/page";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../lib/auth";
-import { use } from "react";
+
 
 export default async function () {
   const session = await getServerSession(authOptions);
@@ -21,6 +21,9 @@ export default async function () {
         fromUserId: Number(from)
       }
     });
+    if(p2ptransfer.length===0){
+      return [[],[]]
+    }
      const touser:any=p2ptransfer.map((t)=>({
       touserid:t.toUserId
     }))
@@ -36,12 +39,12 @@ export default async function () {
     }
     const usertransactions:any=await getusertransactions(session.user.id)
   return (
-    <div>
-      <div className=" ">
+    <div className="text-center flex-auto overflow-hidden">
+      <div className="  h-screen overflow-y-scroll  ">
         <div className="text-4xl text-blue-500 pt-8 mb-8 font-bold">
           Recent transactions
         </div>
-        <div className="pt-2">
+        <div className="pt-2 ml-20">
           {transactions.map((t:ty) => (
             <div className="flex justify-between py-3" key={t.time.toString()}>
               <div>
@@ -65,7 +68,8 @@ export default async function () {
                       : "Failed"}
                 </div>
               </div>
-              <div className="flex flex-col justify-center text-white text-xl">
+              <div className=""></div>
+              <div className="flex flex-col justify-center text-white text-xl mr-28">
                 + Rs {t.amount / 100}
               </div>
             </div>
@@ -75,7 +79,7 @@ export default async function () {
   <div>
     {usertransactions[0].map((t: any) =>
       usertransactions[1].map((u: any) => (
-        <div className="pt-2" key={t.timestamp.toString()}>
+        <div className="pt-2 ml-14" key={t.timestamp.toString()}>
           <div className="flex justify-between py-3">
             <div>
               <div className="text-xl text-white">Sent INR</div>
@@ -88,7 +92,7 @@ export default async function () {
                 Success
               </div>
             </div>
-            <div className="flex flex-col justify-center text-red-600 text-xl">
+            <div className="flex flex-col justify-center mr-28 text-red-600 text-xl">
               - Rs {t.amount / 100}
             </div>
           </div>
