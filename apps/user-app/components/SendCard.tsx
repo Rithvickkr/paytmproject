@@ -5,6 +5,7 @@ import { Center } from "@repo/ui/center";
 import { TextInput } from "@repo/ui/textinput";
 import { useState } from "react";
 import { p2pTransfer } from "../app/lib/actions/p2pTransfer";
+import toast from "react-hot-toast";
 
 export function SendCard() {
     const [number, setNumber] = useState("");
@@ -22,7 +23,21 @@ export function SendCard() {
                     }} />
                     <div className="pt-4 flex justify-center">
                         <Button onClick={async () => {
-                            await p2pTransfer(number, Number(amount) * 100)
+                            const message = await p2pTransfer(number, Number(amount) * 100);
+                            if (message.status === "error") {
+                                toast.error(message.message);
+                            } else {
+                                toast.promise(
+                                    p2pTransfer(number, Number(amount) * 100),
+                                    {
+                                        loading: 'Transferring..',
+                                        success: <b>Money sent successfully</b>,
+                                        error: <b>Could not sent.</b>
+                                    }
+                                );
+                            }
+                            document.getElementById("first_name")?.setAttribute("value", "");
+                            document.getElementById("first_name")?.setAttribute("value", "");
                         }}>Send</Button>
                     </div>
                 </div>

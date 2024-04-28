@@ -6,13 +6,16 @@ import prisma from "@repo/db/client";
 
 
 
+
 export async function p2pTransfer(to: string, amount: number) {
+  try {
  
     const session = await getServerSession(authOptions);
     const from = session?.user?.id;
     if (!from) {
         return {
-            message: "Error while sending"
+            message: "Error while sending",
+            status:"error"
         }
     }
     const toUser = await prisma.user.findFirst({
@@ -23,11 +26,13 @@ export async function p2pTransfer(to: string, amount: number) {
 
     if (!toUser) {
         return {
-            message: "User not found"
+            message: "User not found",
+            status:"error"
         }
     }
 
     await prisma.$transaction(async (tx: any): Promise<void> => {
+  
         await tx.$queryRaw`SELECT * FROM "Balance" WHERE "userId" = ${Number(from)} FOR UPDATE`;
         const fromBalance = await tx.balance.findUnique({
             where: { userId: Number(from) },
@@ -76,7 +81,7 @@ export async function p2pTransfer(to: string, amount: number) {
               
               fromUser: {
                 connect: {
-                  id: toUser.id// Replace with the correct ID of the 'from' user
+                  id: toUser.id
                 }
               },
                
@@ -98,4 +103,13 @@ export async function p2pTransfer(to: string, amount: number) {
             }
           })
     });
+    return {  
+        message: "Money sent successfully",
+        status:"success"
+    }
+  }
+  catch (e: any) {
+  
+    return e.message == "Insufficient funds" ? { message: e.message, status: "error" } : { message: "Server error, please try again", status: "error" };
+  }
 }
